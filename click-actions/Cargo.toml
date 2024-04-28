@@ -1,0 +1,19 @@
+[package]
+name = "click-actions"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "close"
+path = "src/bin/close.rs"
+
+[[bin]]
+name = "minimize"
+path = "src/bin/minimize.rs"
+
+[[bin]]
+name = "raise"
+path = "src/bin/raise.rs"
+
+[dependencies]
+x11 = "2.21.0"
