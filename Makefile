@@ -9,14 +9,8 @@ main: main.c windowlist.o windowlist.h toml-c.h
 windowlist.o: windowlist.c
 	gcc $(CFLAGS) -c windowlist.c
 
-click-actions/raise: click-actions/raise.c
-	gcc $(CFLAGS) $(LDFLAGS) -o click-actions/raise click-actions/raise.c
-
-click-actions/minimize: click-actions/minimize.c
-	gcc $(CFLAGS) $(LDFLAGS) -o click-actions/minimize click-actions/minimize.c
-
-click-actions/close: click-actions/close.c
-	gcc $(CFLAGS) $(LDFLAGS) -o click-actions/close click-actions/close.c
+click-actions/%:
+	cd click-actions; cargo build --release --bin `basename $@`; mv target/release/`basename $@` .
 
 clean:
 	rm windowlist.o
