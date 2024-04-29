@@ -417,11 +417,17 @@ void spy_root_window(Display* d, char* path) {
     free(prev_wlist);
 }
 
-int main(int argc, char* argv[]) {
-    char* path = dirname(argv[0]);
+int main_c(int argc, char* argv) {
+    // printf("Les carottes sont cuites.\n");
+    printf("Les loutres sont cuites.\n");
+    printf("%s.\n", argv);
+    char* path = dirname(argv);
+    printf("Loutre.\n");
 
     Display* d = XOpenDisplay(NULL);
+    printf("Canard.\n");
     toml_table_t* tbl = parse_config("config.toml", path);
+    printf("Narval.\n");
 
     // Listen to XEvents forever and print the window list (output to stdout)
     spy_root_window(d, path);
