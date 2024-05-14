@@ -7,8 +7,8 @@
 #include "toml-c.h"
 #include "windowlist.h"
 
-#define MAX_STR_LEN 200
 
+#define MAX_STR_LEN 200
 struct configuration {
     char* sort_by;
     int max_windows;
@@ -55,7 +55,13 @@ struct configuration {
 
     toml_array_t* ignored_classes;
     toml_table_t* window_nicknames;
+
+    char p1[72];
 } config;
+
+extern void hello_from_rust();
+extern bool is_ignored(struct configuration*, char* class);
+extern char* get_window_nickname(struct configuration*, char* class, char* title); 
 
 toml_table_t* parse_config(char* filename, char* path) {
     char config_path[MAX_STR_LEN];
@@ -163,37 +169,6 @@ bool is_unused(char* option) {
     return false;
 }
 
-bool is_ignored(char* class) {
-    for (int i = 0; i < toml_array_len(config.ignored_classes); i++) {
-        char* ignored_class = toml_array_string(config.ignored_classes, i).u.s;
-        if (!strcasecmp(class, ignored_class)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-char* get_window_nickname(char* class, char* title) {
-    for (int i = 0; i < toml_table_len(config.window_nicknames); i++) {
-        int keylen;
-
-        const char* key = toml_table_key(config.window_nicknames, i, &keylen);
-        char* val;
-
-        if (!strcmp(config.name, "title")) {
-            if (!strcasecmp(key, title)) {
-                val = toml_table_string(config.window_nicknames, key).u.s;
-                return val;
-            }
-        } else {
-            if (!strcasecmp(key, class)) {
-                val = toml_table_string(config.window_nicknames, key).u.s;
-                return val;
-            }
-        }
-    }
-    return NULL;
-}
 
 void print_polybar_str(char* label, char* fg_color, char* bg_color, char* ul_color,
                        char* l_click, char* m_click, char* r_click, char* scroll_up, char* scroll_down) {
@@ -280,7 +255,7 @@ void output(struct window_props* wlist, int n, Window active_window, char* path)
         char* title = wlist[i].title;
         Window wid = wlist[i].id;
 
-        if (is_ignored(class)) {
+        if (is_ignored(&config, class)) {
             continue;
         }
 
@@ -318,7 +293,7 @@ void output(struct window_props* wlist, int n, Window active_window, char* path)
             window_ul_color = config.active_window_ul_color;
         }
 
-        char* window_name = get_window_nickname(class, title);
+        char* window_name = get_window_nickname(&config, class, title);
         
         if (!window_name) {
             if (!strcmp(config.name, "title")) {
@@ -417,21 +392,20 @@ void spy_root_window(Display* d, char* path) {
     free(prev_wlist);
 }
 
+
 int main_c(int argc, char* argv) {
-    // printf("Les carottes sont cuites.\n");
-    printf("Les loutres sont cuites.\n");
-    printf("%s.\n", argv);
+    printf("Les carottes sont cuites.\n");
     char* path = dirname(argv);
-    printf("Loutre.\n");
 
     Display* d = XOpenDisplay(NULL);
-    printf("Canard.\n");
-    toml_table_t* tbl = parse_config("config.toml", path);
-    printf("Narval.\n");
+    // toml_table_t* tbl = parse_config("config.toml", path);
+    printf("Le c est parti %p %i\n", config.sort_by, config.max_windows);
+    printf("Le %s\n", config.sort_by);
+    hello_from_rust();
 
     // Listen to XEvents forever and print the window list (output to stdout)
     spy_root_window(d, path);
 
     XCloseDisplay(d);
-    toml_free(tbl);
+    // toml_free(tbl);
 }
