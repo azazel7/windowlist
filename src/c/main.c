@@ -295,7 +295,7 @@ void output(struct window_props* wlist, int n, Window active_window, char* path)
 
         char* window_name = get_window_nickname(&config, class, title);
         
-        if (!window_name) {
+        if (!window_name) { //If null, allocate something
             if (!strcmp(config.name, "title")) {
                 window_name = malloc(strlen(title)+1 + (config.name_padding * 2) * sizeof(char));
                 strcpy(window_name, title);
@@ -303,7 +303,13 @@ void output(struct window_props* wlist, int n, Window active_window, char* path)
                 window_name = malloc(strlen(class)+1 + (config.name_padding * 2) * sizeof(char));
                 strcpy(window_name, class);
             }
+        } else {
+            int length = strlen(window_name)+1;
+            char* new_window_name = malloc(length + (config.name_padding * 2) * sizeof(char));
+            strcpy(new_window_name, window_name);
+            window_name = new_window_name;
         }
+        //from here, window_name contains something that has been allocated by *malloc*
 
         if (strlen(window_name) > config.name_max_length) {
             // Name is truncated
