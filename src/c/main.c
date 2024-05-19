@@ -63,65 +63,6 @@ extern void hello_from_rust();
 extern bool is_ignored(struct configuration*, char* class);
 extern char* get_window_nickname(struct configuration*, char* class, char* title); 
 
-toml_table_t* parse_config(char* filename, char* path) {
-    char config_path[MAX_STR_LEN];
-    snprintf(config_path, MAX_STR_LEN, "%s/%s", path, filename);
-
-    char errbuf[MAX_STR_LEN];
-
-    FILE* fp = fopen(config_path, "r");
-    toml_table_t* tbl = toml_parse_file(fp, errbuf, sizeof(errbuf));
-    fclose(fp);
-
-    config.sort_by = toml_table_string(tbl, "sort_by").u.s;
-    config.max_windows = toml_table_int(tbl, "max_windows").u.i;
-
-    config.name = toml_table_string(tbl, "name").u.s;
-    config.name_case = toml_table_string(tbl, "name_case").u.s;
-    config.name_max_length = toml_table_int(tbl, "name_max_length").u.i;
-    config.name_padding = toml_table_int(tbl, "name_padding").u.i;
-
-    config.empty_desktop_string = toml_table_string(tbl, "empty_desktop_string").u.s;
-    config.separator_string = toml_table_string(tbl, "separator_string").u.s;
-
-    config.active_window_left_click = toml_table_string(tbl, "active_window_left_click").u.s;
-    config.active_window_middle_click = toml_table_string(tbl, "active_window_middle_click").u.s;
-    config.active_window_right_click = toml_table_string(tbl, "active_window_right_click").u.s;
-    config.active_window_scroll_up = toml_table_string(tbl, "active_window_scroll_up").u.s;
-    config.active_window_scroll_down = toml_table_string(tbl, "active_window_scroll_down").u.s;
-
-    config.inactive_window_left_click = toml_table_string(tbl, "inactive_window_left_click").u.s;
-    config.inactive_window_middle_click = toml_table_string(tbl, "inactive_window_middle_click").u.s;
-    config.inactive_window_right_click = toml_table_string(tbl, "inactive_window_right_click").u.s;
-    config.inactive_window_scroll_up = toml_table_string(tbl, "inactive_window_scroll_up").u.s;
-    config.inactive_window_scroll_down = toml_table_string(tbl, "inactive_window_scroll_down").u.s;
-
-    config.active_window_fg_color = toml_table_string(tbl, "active_window_fg_color").u.s;
-    config.active_window_bg_color = toml_table_string(tbl, "active_window_bg_color").u.s;
-    config.active_window_ul_color = toml_table_string(tbl, "active_window_ul_color").u.s;
-
-    config.inactive_window_fg_color = toml_table_string(tbl, "inactive_window_fg_color").u.s;
-    config.inactive_window_bg_color = toml_table_string(tbl, "inactive_window_bg_color").u.s;
-    config.inactive_window_ul_color = toml_table_string(tbl, "inactive_window_ul_color").u.s;
-
-    config.separator_fg_color = toml_table_string(tbl, "separator_fg_color").u.s;
-    config.separator_bg_color = toml_table_string(tbl, "separator_bg_color").u.s;
-    config.separator_ul_color = toml_table_string(tbl, "separator_ul_color").u.s;
-
-    config.empty_desktop_fg_color = toml_table_string(tbl, "empty_desktop_fg_color").u.s;
-    config.empty_desktop_bg_color = toml_table_string(tbl, "empty_desktop_bg_color").u.s;
-    config.empty_desktop_ul_color = toml_table_string(tbl, "empty_desktop_ul_color").u.s;
-
-    config.overflow_fg_color = toml_table_string(tbl, "overflow_fg_color").u.s;
-    config.overflow_bg_color = toml_table_string(tbl, "overflow_bg_color").u.s;
-    config.overflow_ul_color = toml_table_string(tbl, "overflow_ul_color").u.s;
-
-    config.ignored_classes = toml_table_array(tbl, "ignored_classes");
-    config.window_nicknames = toml_table_table(tbl, "window_nicknames");
-
-    return tbl;
-}
-
 void lowercase(char* str) {
     for(int i = 0; str[i]; i++) {
         str[i] = tolower(str[i]);
@@ -404,7 +345,6 @@ int main_c(int argc, char* argv) {
     char* path = dirname(argv);
 
     Display* d = XOpenDisplay(NULL);
-    // toml_table_t* tbl = parse_config("config.toml", path);
     printf("Le c est parti %p %i\n", config.sort_by, config.max_windows);
     printf("Le %s\n", config.sort_by);
     hello_from_rust();
@@ -413,5 +353,4 @@ int main_c(int argc, char* argv) {
     spy_root_window(d, path);
 
     XCloseDisplay(d);
-    // toml_free(tbl);
 }
